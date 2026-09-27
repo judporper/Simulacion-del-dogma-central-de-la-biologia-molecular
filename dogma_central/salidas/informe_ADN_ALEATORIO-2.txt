@@ -1,0 +1,76 @@
+======================================================================
+ SIMULADOR DEL DOGMA CENTRAL DE LA BIOLOGÍA MOLECULAR
+======================================================================
+
+Secuencia: ADN_ALEATORIO
+Descripción: Secuencia aleatoria generada (60 pb)
+Longitud: 60 pb
+
+======================================================================
+ ETAPA 1 - REPLICACION DEL ADN  (ADN -> ADN)
+======================================================================
+Enzimas/moléculas implicadas: helicasa, primasa, ADN polimerasa, ADN ligasa
+
+1. Apertura de la doble hélice (helicasa)
+  Hebra codificante (5'->3'): GCGCAACTGTTATTCTTGTTACCGGACCCCCTACGCATGTTTGTGAATCTACCCGCGTGG
+  Hebra molde        (3'<-5'): CGCGTTGACAATAAGAACAATGGCCTGGGGGATGCGTACAAACACTTAGATGGGCGCACC
+
+2. Hebra líder: síntesis continua
+  Cebador de ARN (primasa): 5'-AUAAGC-3'
+  Molde usado: hebra codificante (3'->5')
+  Nueva hebra líder (5'->3'): CGCGTTGACAATAAGAACAATGGCCTGGGGGATGCGTACAAACACTTAGATGGGCGCACC
+
+3. Hebra rezagada: 6 fragmentos de Okazaki
+  Molde usado: hebra molde (5'->3')
+   - Fragmento  1 | cebador 5'-AUAAGC-3' | ADN: GCGCAACTGT (10 nt)
+   - Fragmento  2 | cebador 5'-AUAAGC-3' | ADN: TATTCTTGTT (10 nt)
+   - Fragmento  3 | cebador 5'-AUAAGC-3' | ADN: ACCGGACCCC (10 nt)
+   - Fragmento  4 | cebador 5'-AUAAGC-3' | ADN: CTACGCATGT (10 nt)
+   - Fragmento  5 | cebador 5'-AUAAGC-3' | ADN: TTGTGAATCT (10 nt)
+   - Fragmento  6 | cebador 5'-AUAAGC-3' | ADN: ACCCGCGTGG (10 nt)
+  ADN ligasa une los fragmentos -> hebra rezagada completa:
+  GCGCAACTGTTATTCTTGTTACCGGACCCCCTACGCATGTTTGTGAATCTACCCGCGTGG
+
+4. Resultado: dos moléculas hijas semiconservativas
+  Hija 1 = hebra parental codificante + hebra líder nueva
+  Hija 2 = hebra parental molde       + hebra rezagada nueva
+
+======================================================================
+ ETAPA 2 - TRANSCRIPCION  (ADN -> ARN)
+======================================================================
+Enzimas/moléculas implicadas: ARN polimerasa
+
+Molde utilizado (hebra de ADN, 3'->5'):
+  CGCGTTGACAATAAGAACAATGGCCTGGGGGATGCGTACAAACACTTAGATGGGCGCACC
+
+ARN mensajero sintetizado (5'->3'):
+  GCGCAACUGUUAUUCUUGUUACCGGACCCCCUACGCAUGUUUGUGAAUCUACCCGCGUGG
+
+(Regla de complementariedad aplicada: A<->U, T<->A, C<->G, G<->C)
+
+======================================================================
+ ETAPA 3 - TRADUCCION  (ARN -> PROTEINA)
+======================================================================
+Enzimas/moléculas implicadas: ribosoma, ARNt, aminoacil-ARNt sintetasa
+
+Codón de inicio AUG localizado en la posición 36
+
+Lectura del ribosoma, codón a codón:
+   pos   36 | codón AUG -> M        Metionina
+   pos   39 | codón UUU -> F        Fenilalanina
+   pos   42 | codón GUG -> V        Valina
+   pos   45 | codón AAU -> N        Asparagina
+   pos   48 | codón CUA -> L        Leucina
+   pos   51 | codón CCC -> P        Prolina
+   pos   54 | codón GCG -> A        Alanina
+   pos   57 | codón UGG -> W        Triptófano
+
+Secuencia de aminoácidos (proteína resultante):
+  MFVNLPAW
+  Longitud: 8 aminoácidos
+  (No se alcanzó codón de parada: el ARNm se agotó antes)
+
+======================================================================
+ RESUMEN DEL FLUJO DE INFORMACION GENETICA
+======================================================================
+  ADN (60 pb)  ->  ARNm (60 nt)  ->  Proteína (8 aa)
