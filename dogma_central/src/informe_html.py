@@ -84,7 +84,7 @@ def _tabla_codones(codones, proteina_len: int) -> str:
     filas = []
     for i, c in enumerate(codones):
         grupo = "stop" if c.aminoacido == "*" else GRUPO_AMINOACIDO.get(c.aminoacido, "otro")
-        nombre = "Codón STOP (fin de traducción)" if c.aminoacido == "*" else NOMBRE_AMINOACIDO.get(c.aminoacido, c.aminoacido)
+        nombre = "Codón STOP (fin de traducción)" if c.aminoacido == "*" else f"{NOMBRE_AMINOACIDO.get(c.aminoacido, c.aminoacido)} · anticodón ARNt 3'-{c.anticodon}-5'"
         filas.append(
             f'<div class="codon {grupo}" data-step="{i}" title="{_esc(nombre)}">'
             f'<div class="codon-triplete">{_esc(c.codon)}</div>'
@@ -269,15 +269,15 @@ def generar_informe_html(
   </div>
 
   <h3>2 · Hebra líder — síntesis continua</h3>
-  <p class="hint">Cebador de ARN: <span class="cebador">5'-{_esc(replicacion.cebador_hebra_lider)}-3'</span>, extendido sin interrupción por la ADN polimerasa.</p>
+  <p class="hint">Molde: hebra molde (3'→5'), leída en el mismo sentido que avanza la horquilla. Cebador de ARN: <span class="cebador">5'-{_esc(replicacion.cebador_hebra_lider)}-3'</span>, extendido sin interrupción por la ADN polimerasa.</p>
   <div class="seq">5'-{_spans_bases(replicacion.hebra_lider_nueva)}-3'</div>
 
   <h3>3 · Hebra rezagada — {len(replicacion.fragmentos_okazaki)} fragmentos de Okazaki</h3>
-  <p class="hint">Cada fragmento empieza con su propio cebador de ARN (subrayado); la ADN ligasa los uniría después.</p>
+  <p class="hint">Molde: hebra codificante. Cada fragmento se sintetiza 5'→3', en sentido contrario a la horquilla, y empieza con su propio cebador de ARN (subrayado). Después, la ADN polimerasa I sustituye los cebadores por ADN y la ADN ligasa une los fragmentos.</p>
   <div class="okazaki-track">{_bloque_okazaki(replicacion.fragmentos_okazaki)}</div>
 
   <h3>4 · Resultado: dos moléculas hijas semiconservativas</h3>
-  <p class="hint">Hija 1 = hebra parental codificante + hebra líder nueva &nbsp;·&nbsp; Hija 2 = hebra parental molde + hebra rezagada nueva</p>
+  <p class="hint">Hija 1 = hebra molde parental + hebra líder nueva &nbsp;·&nbsp; Hija 2 = hebra codificante parental + hebra rezagada nueva</p>
 </section>
 
 <section class="etapa" id="tab-transcripcion">

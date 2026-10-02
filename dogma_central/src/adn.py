@@ -15,6 +15,7 @@ Convenio de orientación usado en todo el proyecto:
       derecha), tal y como se introduce o se lee de un fichero FASTA/GenBank.
     - `hebra_molde` es su complementaria, alineada base a base con la
       anterior, por lo que queda en sentido 3' <- 5' (antiparalela).
+    - La horquilla de replicación avanza de izquierda a derecha.
 """
 
 from __future__ import annotations
@@ -25,6 +26,9 @@ BASES_ADN = set("ACGT")
 
 # Reglas de complementariedad de Watson-Crick para el ADN
 COMPLEMENTO_ADN = {"A": "T", "T": "A", "C": "G", "G": "C"}
+
+# Longitud (nt) de los cebadores de ARN. Es una simplificación didáctica.
+TAM_CEBADOR = 6
 
 
 def es_adn_valido(secuencia: str) -> bool:
@@ -37,16 +41,28 @@ def complementaria_adn(secuencia: str) -> str:
     return "".join(COMPLEMENTO_ADN[b] for b in secuencia.upper())
 
 
+def revcomp_adn(secuencia: str) -> str:
+    """Complementaria inversa: la hebra antiparalela leída en sentido 5' -> 3'."""
+    return complementaria_adn(secuencia)[::-1]
+
+
+def _cebador_arn(adn_5_3: str) -> str:
+    """Cebador de ARN: mismos nucleótidos que el ADN al que sustituye, con U en vez de T."""
+    return adn_5_3.replace("T", "U")
+
+
 @dataclass
 class FragmentoOkazaki:
-    """Un fragmento de la hebra rezagada, con su propio cebador de ARN."""
+    """Fragmento de la hebra rezagada, en sentido 5'->3': cebador de ARN + ADN."""
     indice: int
     cebador_arn: str
     fragmento_adn: str
+    inicio_molde: int = 0   # bloque de la hebra molde (0-indexado) que copia
+    fin_molde: int = 0
 
     @property
     def longitud(self) -> int:
-        return len(self.fragmento_adn)
+        return len(self.cebador_arn) + len(self.fragmento_adn)
 
 
 @dataclass
@@ -60,14 +76,14 @@ class ResultadoReplicacion:
     hebra_rezagada_nueva: str = ""
 
     @property
-    def molecula_hija_1(self) -> str:
-        """Hebra parental codificante + hebra líder nueva (complementaria)."""
-        return self.hebra_lider_nueva
+    def molecula_hija_1(self) -> tuple[str, str]:
+        """(hebra molde parental, hebra líder nueva)."""
+        return self.hebra_parental_molde, self.hebra_lider_nueva
 
     @property
-    def molecula_hija_2(self) -> str:
-        """Hebra parental molde + hebra rezagada nueva (complementaria)."""
-        return self.hebra_rezagada_nueva
+    def molecula_hija_2(self) -> tuple[str, str]:
+        """(hebra codificante parental, hebra rezagada nueva)."""
+        return self.hebra_parental_codificante, self.hebra_rezagada_nueva
 
 
 class ADN:
@@ -94,46 +110,58 @@ class ADN:
     # ------------------------------------------------------------------ #
     def replicar(self, tamano_fragmento_okazaki: int = 10) -> ResultadoReplicacion:
         """
-        Simula la replicación semiconservativa de la molécula de ADN.
+        Simula la replicación semiconservativa con la horquilla avanzando de
+        izquierda a derecha.
 
-        1) La helicasa "abre" la doble hélice (ya la tenemos separada en
-           hebra_codificante / hebra_molde).
-        2) La primasa coloca un cebador de ARN al inicio de cada hebra nueva.
-        3) La ADN polimerasa sintetiza:
-             - la HEBRA LÍDER de forma continua, usando `hebra_codificante`
-               como molde (avanza en el mismo sentido que la horquilla).
-             - la HEBRA REZAGADA de forma discontinua, usando `hebra_molde`
-               como molde, generando fragmentos de Okazaki que luego una
-               ADN ligasa uniría en una única hebra continua.
+        1) La helicasa abre la doble hélice (hebra_codificante / hebra_molde).
+        2) HEBRA LÍDER: molde = hebra_molde (se lee 3'->5' en el sentido de la
+           horquilla). La ADN polimerasa sintetiza de forma continua, con un
+           único cebador de ARN puesto por la primasa.
+        3) HEBRA REZAGADA: molde = hebra_codificante (5'->3' en el sentido de
+           la horquilla). Cada fragmento de Okazaki se sintetiza 5'->3' en
+           sentido contrario a la horquilla, con su propio cebador de ARN en
+           el extremo 5'.
+        4) La ADN pol I sustituye los cebadores por ADN y la ADN ligasa une
+           los fragmentos en una hebra continua.
         """
-        if tamano_fragmento_okazaki < 1:
-            raise ValueError("El tamaño de fragmento de Okazaki debe ser >= 1")
+        if tamano_fragmento_okazaki <= TAM_CEBADOR:
+            raise ValueError(
+                f"El tamaño de fragmento de Okazaki debe ser mayor que {TAM_CEBADOR} nt."
+            )
+
+        n = len(self)
 
         # --- Hebra líder: síntesis continua, un único cebador ---
-        cebador_lider = "AUAAGC"[: min(6, len(self))]  # cebador corto simbólico
-        hebra_lider_nueva = complementaria_adn(self.hebra_codificante)
+        # Complementaria del molde: coincide con la codificante, en 5'->3'.
+        lider = complementaria_adn(self.hebra_molde)
+        cebador_lider = _cebador_arn(lider[: min(TAM_CEBADOR, n)])
 
         # --- Hebra rezagada: fragmentos de Okazaki ---
         fragmentos: list[FragmentoOkazaki] = []
-        molde_rezagada = self.hebra_molde
-        n = len(molde_rezagada)
-        indice_fragmento = 1
-        for inicio in range(0, n, tamano_fragmento_okazaki):
-            trozo_molde = molde_rezagada[inicio: inicio + tamano_fragmento_okazaki]
-            cebador = "AUAAGC"[: min(6, len(trozo_molde))]
-            trozo_nuevo = complementaria_adn(trozo_molde)
-            fragmentos.append(FragmentoOkazaki(indice_fragmento, cebador, trozo_nuevo))
-            indice_fragmento += 1
+        for k, inicio in enumerate(range(0, n, tamano_fragmento_okazaki), start=1):
+            fin = min(inicio + tamano_fragmento_okazaki, n)
+            bloque = self.hebra_codificante[inicio:fin]
+            nuevo = revcomp_adn(bloque)  # fragmento nuevo en sentido 5'->3'
+            pc = min(TAM_CEBADOR, len(nuevo))
+            fragmentos.append(
+                FragmentoOkazaki(
+                    indice=k,
+                    cebador_arn=_cebador_arn(nuevo[:pc]),
+                    fragmento_adn=nuevo[pc:],
+                    inicio_molde=inicio,
+                    fin_molde=fin,
+                )
+            )
 
-        # La ADN ligasa retira los cebadores de ARN (simplificado aquí: no se
-        # simula su eliminación nucleotídica) y une los fragmentos entre sí.
-        hebra_rezagada_completa = "".join(f.fragmento_adn for f in fragmentos)
+        # Tras retirar cebadores y unir con la ligasa, la hebra rezagada queda
+        # completa. Se muestra alineada con su molde (3'<-5' de izda. a dcha.).
+        hebra_rezagada_completa = complementaria_adn(self.hebra_codificante)
 
         return ResultadoReplicacion(
             hebra_parental_codificante=self.hebra_codificante,
             hebra_parental_molde=self.hebra_molde,
             cebador_hebra_lider=cebador_lider,
-            hebra_lider_nueva=hebra_lider_nueva,
+            hebra_lider_nueva=lider,
             fragmentos_okazaki=fragmentos,
             hebra_rezagada_nueva=hebra_rezagada_completa,
         )

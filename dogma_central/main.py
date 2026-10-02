@@ -147,6 +147,22 @@ def main() -> None:
 
         resultado = simulador.ejecutar()
 
+        lineas = vis.construir_informe_texto(
+            nombre=datos.identificador,
+            descripcion=datos.descripcion,
+            longitud_adn=len(simulador.adn),
+            replicacion=resultado.replicacion,
+            transcripcion=resultado.transcripcion,
+            traduccion=resultado.traduccion,
+        )
+        if len(simulador.adn) <= 300:
+            print("\n" + "\n".join(lineas))
+        else:
+            print(
+                f"\nSecuencia larga ({len(simulador.adn)} pb): el detalle completo "
+                "se guarda en el informe."
+            )
+
         print(
             f"\nSimulación completada - ADN: {len(simulador.adn)} pb, "
             f"ARNm: {len(resultado.transcripcion.arnm)} nt, "
@@ -157,20 +173,12 @@ def main() -> None:
         if respuesta != "n":
             nombre_base = f"informe_{_nombre_fichero_seguro(datos.identificador)}"
             ruta_txt = _ruta_disponible(CARPETA_SALIDAS, nombre_base, ".txt")
-            lineas = vis.construir_informe_texto(
-                nombre=datos.identificador,
-                descripcion=datos.descripcion,
-                longitud_adn=len(simulador.adn),
-                replicacion=resultado.replicacion,
-                transcripcion=resultado.transcripcion,
-                traduccion=resultado.traduccion,
-            )
             try:
                 vis.guardar_informe_texto(ruta_txt, lineas)
                 print(f"Informe guardado en: {ruta_txt}")
             except OSError as err:
                 print(f"No se pudo guardar el informe de texto: {err}")
-
+                
         respuesta_html = input(
             "¿Generar un informe HTML interactivo? [S/n]: "
         ).strip().lower()

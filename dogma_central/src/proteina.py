@@ -51,12 +51,19 @@ CODON_INICIO = "AUG"
 CODONES_PARADA = {"UAA", "UAG", "UGA"}
 
 
+COMPLEMENTO_ARN = {"A": "U", "U": "A", "G": "C", "C": "G"}
+
+
 @dataclass
 class CodonTraducido:
     posicion: int          # posición del codón dentro del ARNm (0-indexado)
     codon: str
     aminoacido: str        # letra IUPAC, o "*" si es parada
 
+    @property
+    def anticodon(self) -> str:
+        """Anticodón del ARNt (3'->5'), emparejado base a base con el codón."""
+        return "".join(COMPLEMENTO_ARN[b] for b in self.codon)
 
 @dataclass
 class ResultadoTraduccion:
