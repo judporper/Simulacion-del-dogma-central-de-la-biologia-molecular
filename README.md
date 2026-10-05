@@ -123,7 +123,8 @@ Proteína:  MAIVMGR   (termina en el codón UGA)
 ```
 
 Con el gen *lacZ* de ejemplo (3075 pb) se obtiene la β-galactosidasa de 1024
-aminoácidos (MTMITDSLAVVLQRRDWENPG…), que termina con codón de parada.
+aminoácidos (MTMITDSLAVVLQRRDWENPG…), que termina con codón de parada. Esta
+proteína coincide con la anotada en el propio fichero GenBank del ejemplo.
 
 ## Probar con tus propios ficheros
 
@@ -138,15 +139,19 @@ bases ambiguas (N, etc.).
   complementaria alineada base a base (3'←5'). La horquilla avanza de izquierda
   a derecha.
 - **Fragmentos de Okazaki:** por defecto miden 10 nt (parámetro
-  `tamano_fragmento_okazaki`, siempre mayor que el cebador de 6 nt). Es un
-  tamaño didáctico: en bacterias miden 1000-2000 nt.
+  `tamano_fragmento_okazaki`, siempre mayor que el cebador de 6 nt). Si el
+  último bloque de la secuencia queda con 6 nt o menos, se une al fragmento
+  anterior, así que el último puede medir hasta 16 nt. Es un tamaño didáctico:
+  en bacterias miden 1000-2000 nt.
 - **Cebadores:** son ARN complementario al molde en ese punto, de 6 nt.
 - **Transcripción:** se transcribe toda la secuencia a partir de la hebra
   molde, sin modelar promotor, terminador ni procesamiento (cap, poliA, splicing).
   La teoría de iniciación, elongación y terminación se indica en el informe.
 - **Traducción:** empieza en el primer AUG y acaba en el primer codón de
   parada, con el código genético estándar (tabla 1 de NCBI). La tabla 11
-  (bacteriana) apenas difiere de ella.
+  (bacteriana) asigna los mismos aminoácidos y los mismos codones de parada;
+  solo cambian los codones de inicio alternativos, que el simulador no usa
+  (siempre se parte de AUG).
 - **Sin dependencias:** los lectores de FASTA y GenBank están escritos a mano
   (sin Biopython) y el informe HTML es autocontenido, así que no hace falta
   `pip install`.

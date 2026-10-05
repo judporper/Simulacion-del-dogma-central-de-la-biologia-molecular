@@ -230,7 +230,7 @@ GAAGGCACATGGCTGAATATCGACGGTTTCCATATGGGGATTGGTGGCGACGACTCCTGG
 AGCCCGTCAGTATCGGCGGAATTCCAGCTGAGCGCCGGTCGCTACCATTACCAGTTGGTC
 TGGTGTCAAAAATAA
 
-3. Hebra rezagada: 308 fragmentos de Okazaki
+3. Hebra rezagada: 307 fragmentos de Okazaki
   Molde: hebra codificante. Cada fragmento se sintetiza en sentido 5'->3', contrario
   al avance de la horquilla, y empieza con su propio cebador de ARN (primasa);
   la ADN polimerasa III los extiende.
@@ -540,8 +540,7 @@ TGGTGTCAAAAATAA
    - Fragmento 304 | molde pos. 3031-3040 | cebador ARN 5'-GACCGG-3' + ADN CGCT (10 nt)
    - Fragmento 305 | molde pos. 3041-3050 | cebador ARN 5'-UAAUGG-3' + ADN TAGC (10 nt)
    - Fragmento 306 | molde pos. 3051-3060 | cebador ARN 5'-GACCAA-3' + ADN CTGG (10 nt)
-   - Fragmento 307 | molde pos. 3061-3070 | cebador ARN 5'-UUUGAC-3' + ADN ACCA (10 nt)
-   - Fragmento 308 | molde pos. 3071-3075 | cebador ARN 5'-UUAUU-3' + ADN  (5 nt)
+   - Fragmento 307 | molde pos. 3061-3075 | cebador ARN 5'-UUAUUU-3' + ADN TTGACACCA (15 nt)
   La ADN polimerasa I sustituye los cebadores por ADN y la ADN ligasa sella los huecos
   -> hebra rezagada completa (alineada con su molde, 3'<-5'):
   TACTGGTACTAATGCCTAAGTGACCGGCAGCAAAATGTTGCAGCACTGACCCTTTTGGGA

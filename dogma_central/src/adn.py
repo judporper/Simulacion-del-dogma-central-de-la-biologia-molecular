@@ -138,9 +138,17 @@ class ADN:
         cebador_lider = _cebador_arn(lider[: min(TAM_CEBADOR, n)])
 
         # --- Hebra rezagada: fragmentos de Okazaki ---
+        # Se parte el molde en bloques; si el último queda con TAM_CEBADOR nt o
+        # menos (solo cabría el cebador, sin ADN), se une al bloque anterior.
+        limites: list[list[int]] = []
+        for inicio in range(0, n, tamano_fragmento_okazaki):
+            limites.append([inicio, min(inicio + tamano_fragmento_okazaki, n)])
+        if len(limites) > 1 and limites[-1][1] - limites[-1][0] <= TAM_CEBADOR:
+            ultimo = limites.pop()
+            limites[-1][1] = ultimo[1]
+
         fragmentos: list[FragmentoOkazaki] = []
-        for k, inicio in enumerate(range(0, n, tamano_fragmento_okazaki), start=1):
-            fin = min(inicio + tamano_fragmento_okazaki, n)
+        for k, (inicio, fin) in enumerate(limites, start=1):
             bloque = self.hebra_codificante[inicio:fin]
             nuevo = revcomp_adn(bloque)  # fragmento nuevo en sentido 5'->3'
             pc = min(TAM_CEBADOR, len(nuevo))
