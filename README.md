@@ -3,9 +3,9 @@
 **Bioinformática — Práctica 1**
 ULPGC · Grado en Ciencia e Ingeniería de Datos
 
-Simulador en **Python puro y sin dependencias externas** que representa de
-forma integrada los tres procesos del dogma central y muestra cómo viaja la
-información desde el ADN hasta la proteína:
+Simulador en **Python con Biopython** que representa de forma integrada los
+tres procesos del dogma central y muestra cómo viaja la información desde el
+ADN hasta la proteína:
 
 ```
    ADN  ──replicación──▶  ADN
@@ -17,13 +17,13 @@ información desde el ADN hasta la proteína:
 
 | Objetivo de la práctica | Dónde se implementa |
 |---|---|
-| Replicación: apertura de la doble hélice, cebadores, enzimas, hebra líder, hebra rezagada y fragmentos de Okazaki | `src/adn.py` → `ADN.replicar()` |
-| Transcripción: hebra molde → ARNm, complementariedad de bases | `src/arn.py` → `transcribir()` |
-| Traducción: lectura de codones, código genético, ARNt, señal de terminación | `src/proteina.py` → `traducir()` |
+| Replicación: apertura de la doble hélice, cebadores, enzimas, hebra líder, hebra rezagada y fragmentos de Okazaki | `src/dogma.py` → `replicar()` (complementos con `Seq`) |
+| Transcripción: hebra molde → ARNm, complementariedad de bases | `src/dogma.py` → `transcribir()` (`complement_rna()`) |
+| Traducción: lectura de codones, código genético, ARNt, señal de terminación | `src/dogma.py` → `traducir()` (`Seq.translate()`) |
 | Papel de las moléculas y enzimas de cada etapa | Informe de texto/consola (`visualizador.py`) y fichas del informe HTML (`informe_html.py`) |
 | Visualización de cada etapa (texto o imagen) | Consola y `.txt` (`visualizador.py`); informe HTML con pestañas (`informe_html.py`) |
 | Lenguaje e interacción de libre elección | Python + menú de consola (`main.py`) |
-| Datos biológicos reales (FASTA / GenBank) | `src/lector.py` + `data/ejemplos/` (gen *lacZ* de *E. coli*) |
+| Datos biológicos reales (FASTA / GenBank) | `src/lector.py` (`Bio.SeqIO`) + `data/ejemplos/` (gen *lacZ* de *E. coli*) |
 
 ## Qué simula cada etapa
 
@@ -60,13 +60,11 @@ parada (UAA, UAG, UGA), reconocido por un factor de liberación y no por un ARNt
 dogma_central/
 ├── main.py                  # Punto de entrada: menú interactivo por consola
 ├── src/
-│   ├── adn.py               # Clase ADN + simulación de la REPLICACIÓN
-│   ├── arn.py               # Simulación de la TRANSCRIPCIÓN
-│   ├── proteina.py          # Código genético + simulación de la TRADUCCIÓN
-│   ├── lector.py            # Lectura de FASTA / GenBank / gen aleatorio
+│   ├── dogma.py             # Las tres etapas (replicar, transcribir, traducir) + simular()
+│   ├── lector.py            # Lectura de FASTA / GenBank (Bio.SeqIO) / gen aleatorio
 │   ├── visualizador.py      # Construye el informe de texto plano
-│   ├── informe_html.py      # Informe HTML interactivo (pestañas, colores, reproducción)
-│   └── simulador.py         # Orquesta las tres etapas
+│   └── informe_html.py      # Informe HTML interactivo (pestañas, colores, reproducción)
+├── requirements.txt         # Dependencias (Biopython)
 ├── data/ejemplos/
 │   ├── lacZ_Ecoli_NC_000913.3.fasta   # Gen lacZ real (NCBI), formato FASTA
 │   └── lacZ_Ecoli_NC_000913.3.gb      # Mismo gen, formato GenBank
@@ -79,9 +77,11 @@ dogma_central/
 
 1. Abre la carpeta `dogma_central/` en VS Code (`Archivo → Abrir carpeta…`).
 2. Necesitas **Python 3.10+** y seleccionar el intérprete (`Ctrl+Shift+P` →
-   *Python: Select Interpreter*). No hay que instalar nada más.
-3. Abre una terminal integrada (`` Ctrl+ñ ``) y ejecuta:
+   *Python: Select Interpreter*).
+3. Abre una terminal integrada (`` Ctrl+ñ ``), instala la dependencia (solo la
+   primera vez) y ejecuta:
 ```bash
+   pip install -r requirements.txt
    python main.py
 ```
 4. Elige una opción del menú:
@@ -152,6 +152,9 @@ bases ambiguas (N, etc.).
   (bacteriana) asigna los mismos aminoácidos y los mismos codones de parada;
   solo cambian los codones de inicio alternativos, que el simulador no usa
   (siempre se parte de AUG).
-- **Sin dependencias:** los lectores de FASTA y GenBank están escritos a mano
-  (sin Biopython) y el informe HTML es autocontenido, así que no hace falta
-  `pip install`.
+- **Biopython:** se usa para lo que es biología "estándar" (leer FASTA/GenBank,
+  complementarias, transcripción y traducción con el código genético). La
+  replicación (cebadores y fragmentos de Okazaki) es lógica propia, porque
+  Biopython no simula procesos. El informe HTML sigue siendo autocontenido.
+- **Código genético:** `traducir()` usa la tabla 1 de Biopython (la de `Seq.translate()` por defecto);
+  pasando `table=11` se usaría la bacteriana.

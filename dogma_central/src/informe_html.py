@@ -1,36 +1,10 @@
-"""
-informe_html.py
-----------------
-Genera un informe HTML autocontenido (sin dependencias externas: todo el
-CSS y JS va embebido en un único fichero) que presenta de forma
-interactiva y visual las tres etapas del dogma central:
-
-    ADN -> ADN   (replicación:  helicasa, primasa, ADN polimerasa,
-                  hebra líder, fragmentos de Okazaki, ADN ligasa)
-    ADN -> ARN   (transcripción: ARN polimerasa, complementariedad)
-    ARN -> proteína (traducción: ribosoma, ARNt, código genético)
-
-Este informe complementa (no sustituye) la salida por consola y el
-informe de texto: aquí se puede ver CADA etapa por separado (pestañas), con
-las bases coloreadas, los fragmentos de Okazaki diferenciados y una
-traducción codón a codón que se puede reproducir paso a paso.
-
-No requiere matplotlib ni ninguna librería de terceros: es un único
-fichero .html que se abre con cualquier navegador.
-"""
-
 from __future__ import annotations
 
 import html
 import json
 
-from .adn import ResultadoReplicacion
-from .arn import ResultadoTranscripcion
-from .proteina import ResultadoTraduccion, NOMBRE_AMINOACIDO
+from .dogma import NOMBRE_AMINOACIDO, Simulacion
 
-# ---------------------------------------------------------------------- #
-#  Clasificación de aminoácidos por propiedad química (para el color)
-# ---------------------------------------------------------------------- #
 GRUPO_AMINOACIDO = {
     **{aa: "apolar" for aa in "AVLIPFMWG"},
     **{aa: "polar" for aa in "STCYNQ"},
@@ -66,16 +40,10 @@ def _esc(s: str) -> str:
 
 
 def _spans_bases(secuencia: str) -> str:
-    """Envuelve cada base en un <span> coloreado por tipo de base."""
     return "".join(f'<span class="b {c}">{c}</span>' for c in secuencia)
 
 
 def _doble_hebra_html(sup: str, inf: str, cada: int = 60) -> str:
-    """
-    Dos hebras emparejadas, troceadas en bloques de 'cada' bases para que
-    sigan alineadas aunque la secuencia sea larga (cada bloque tiene una
-    línea 5'->3' arriba y otra 3'<-5' debajo).
-    """
     bloques = []
     for i in range(0, len(sup), cada):
         bloques.append(
@@ -122,19 +90,12 @@ def _lista_enzimas(clave: str) -> str:
     )
 
 
-def generar_informe_html(
-    ruta: str,
-    nombre: str,
-    descripcion: str,
-    replicacion: ResultadoReplicacion,
-    transcripcion: ResultadoTranscripcion,
-    traduccion: ResultadoTraduccion,
-) -> None:
-    adn_len = len(replicacion.hebra_parental_codificante)
-    arn_len = len(transcripcion.arnm)
-    prot_len = len(traduccion.proteina)
+def generar_informe_html(ruta: str, r: Simulacion) -> None:
+    nombre = r.nombre
+    adn_len = len(r.codificante)
+    arn_len = len(r.arnm)
+    prot_len = len(r.proteina)
 
-    # Datos para el "reproductor" de traducción en JavaScript
     pasos_js = json.dumps(
         [
             {
@@ -143,7 +104,7 @@ def generar_informe_html(
                 "nombre": ("STOP" if c.aminoacido == "*" else NOMBRE_AMINOACIDO.get(c.aminoacido, c.aminoacido)),
                 "pos": c.posicion,
             }
-            for c in traduccion.codones
+            for c in r.codones
         ]
     )
 
@@ -256,7 +217,7 @@ def generar_informe_html(
 <header>
   <h1>🧬 Simulación del dogma central de la biología molecular</h1>
   <p><strong>Secuencia:</strong> {_esc(nombre)} &nbsp;·&nbsp; <strong>Longitud:</strong> {adn_len} pb</p>
-  {f'<p>{_esc(descripcion)}</p>' if descripcion else ""}
+  {f'<p>{_esc(r.descripcion)}</p>' if r.descripcion else ""}
   <div class="flujo">
     <div class="paso">ADN ({adn_len} pb)</div>
     <div class="flecha">↺</div>
@@ -284,7 +245,7 @@ def generar_informe_html(
 
   <h3>1 · Apertura de la doble hélice</h3>
   <p class="hint">La helicasa rompe los puentes de hidrógeno; la topoisomerasa alivia la tensión por delante de la horquilla y las proteínas SSB mantienen las hebras separadas. Arriba: hebra codificante (5'→3'). Abajo: hebra molde (3'←5').</p>
-  {_doble_hebra_html(replicacion.hebra_parental_codificante, replicacion.hebra_parental_molde)}
+  {_doble_hebra_html(r.codificante, r.molde)}
   <div class="leyenda-bases">
     <span><span class="dot" style="background:var(--A)"></span>A</span>
     <span><span class="dot" style="background:var(--T)"></span>T</span>
@@ -293,19 +254,19 @@ def generar_informe_html(
   </div>
 
   <h3>2 · Hebra líder — síntesis continua</h3>
-  <p class="hint">Molde: hebra molde (3'→5'), leída en el mismo sentido que avanza la horquilla. Cebador de ARN: <span class="cebador">5'-{_esc(replicacion.cebador_hebra_lider)}-3'</span>, extendido sin interrupción por la ADN polimerasa III.</p>
-  <div class="seq">5'-{_spans_bases(replicacion.hebra_lider_nueva)}-3'</div>
+  <p class="hint">Molde: hebra molde (3'→5'), leída en el mismo sentido que avanza la horquilla. Cebador de ARN: <span class="cebador">5'-{_esc(r.cebador_lider)}-3'</span>, extendido sin interrupción por la ADN polimerasa III.</p>
+  <div class="seq">5'-{_spans_bases(r.lider)}-3'</div>
 
-  <h3>3 · Hebra rezagada — {len(replicacion.fragmentos_okazaki)} fragmentos de Okazaki</h3>
+  <h3>3 · Hebra rezagada — {len(r.okazaki)} fragmentos de Okazaki</h3>
   <p class="hint">Molde: hebra codificante. Cada fragmento se sintetiza 5'→3', en sentido contrario a la horquilla, y empieza con su propio cebador de ARN (subrayado); la ADN polimerasa III lo extiende. Después, la ADN polimerasa I sustituye los cebadores por ADN y la ADN ligasa une los fragmentos.</p>
-  <div class="okazaki-track">{_bloque_okazaki(replicacion.fragmentos_okazaki)}</div>
+  <div class="okazaki-track">{_bloque_okazaki(r.okazaki)}</div>
 
   <h3>4 · Resultado: dos moléculas hijas semiconservativas</h3>
   <p class="hint">Cada molécula hija conserva una hebra parental y lleva una hebra nueva (arriba 5'→3', abajo 3'←5').</p>
   <h4>Hija 1 = hebra líder nueva (arriba) + hebra molde parental (abajo)</h4>
-  {_doble_hebra_html(*replicacion.molecula_hija_1[::-1])}
+  {_doble_hebra_html(r.lider, r.molde)}
   <h4>Hija 2 = hebra codificante parental (arriba) + hebra rezagada nueva (abajo)</h4>
-  {_doble_hebra_html(*replicacion.molecula_hija_2)}
+  {_doble_hebra_html(r.codificante, r.rezagada)}
 </section>
 
 <section class="etapa" id="tab-transcripcion">
@@ -314,10 +275,10 @@ def generar_informe_html(
   <div class="chips">{_lista_enzimas("transcripcion")}</div>
 
   <h3>Hebra molde de ADN utilizada</h3>
-  <div class="seq">3'-{_spans_bases(transcripcion.hebra_molde_usada)}-5'</div>
+  <div class="seq">3'-{_spans_bases(r.molde)}-5'</div>
 
   <h3>ARN mensajero sintetizado</h3>
-  <div class="seq">5'-{_spans_bases(transcripcion.arnm)}-3'</div>
+  <div class="seq">5'-{_spans_bases(r.arnm)}-3'</div>
   <div class="leyenda-bases">
     <span><span class="dot" style="background:var(--A)"></span>A</span>
     <span><span class="dot" style="background:var(--U)"></span>U</span>
@@ -333,7 +294,7 @@ def generar_informe_html(
   <div class="chips">{_lista_enzimas("traduccion")}</div>
 
   <h3>Lectura codón a codón</h3>
-  <div class="codones" id="pistaCodones">{_tabla_codones(traduccion.codones)}</div>
+  <div class="codones" id="pistaCodones">{_tabla_codones(r.codones)}</div>
 
   <div class="reproductor">
     <div class="controles">
@@ -345,8 +306,8 @@ def generar_informe_html(
   </div>
 
   <h3 style="margin-top:22px">Proteína resultante</h3>
-  <div class="seq" style="letter-spacing:3px">{_esc(traduccion.proteina) or "(no se tradujo ningún aminoácido)"}</div>
-  <p class="hint">{prot_len} aminoácidos{" · se alcanzó un codón de parada" if traduccion.parada_encontrada else " · no se encontró codón de parada (el ARNm se agotó)"}</p>
+  <div class="seq" style="letter-spacing:3px">{_esc(r.proteina) or "(no se tradujo ningún aminoácido)"}</div>
+  <p class="hint">{prot_len} aminoácidos{" · se alcanzó un codón de parada" if r.parada else " · no se encontró codón de parada (el ARNm se agotó)"}</p>
 </section>
 
 <section class="etapa" id="tab-resumen">

@@ -17,37 +17,37 @@ Modelo semiconservativo; la horquilla de replicación avanza de izquierda a dere
   La topoisomerasa alivia la tensión por delante de la horquilla y las proteínas SSB
   mantienen las hebras separadas e impiden que vuelvan a emparejarse.
   Arriba: hebra codificante (5'->3')  |  Abajo: hebra molde (3'<-5')
-  5'-ATGGATTGGGTAACGGGTTATGAGTTGACCGTACTACTGAGGCAGGTCCGAGTGTTATAA
-  3'-TACCTAACCCATTGCCCAATACTCAACTGGCATGATGACTCCGTCCAGGCTCACAATATT
+  5'-ATGAAGCGTCATCAGGTACTTATTCTTTTGGGGCTCCTATGTTTAATATGCCGGTATTAG
+  3'-TACTTCGCAGTAGTCCATGAATAAGAAAACCCCGAGGATACAAATTATACGGCCATAATC
 
 2. Hebra líder: síntesis continua
   Molde: hebra molde (se lee 3'->5', en el mismo sentido que avanza la horquilla)
-  Cebador de ARN (primasa): 5'-AUGGAU-3'
+  Cebador de ARN (primasa): 5'-AUGAAG-3'
   La ADN polimerasa III extiende el cebador sin interrupción, en sentido 5'->3'
-  Nueva hebra líder (5'->3'): ATGGATTGGGTAACGGGTTATGAGTTGACCGTACTACTGAGGCAGGTCCGAGTGTTATAA
+  Nueva hebra líder (5'->3'): ATGAAGCGTCATCAGGTACTTATTCTTTTGGGGCTCCTATGTTTAATATGCCGGTATTAG
 
 3. Hebra rezagada: 6 fragmentos de Okazaki
   Molde: hebra codificante. Cada fragmento se sintetiza en sentido 5'->3', contrario
   al avance de la horquilla, y empieza con su propio cebador de ARN (primasa);
   la ADN polimerasa III los extiende.
-   - Fragmento   1 | molde pos. 1-10 | cebador ARN 5'-CCCAAU-3' + ADN CCAT (10 nt)
-   - Fragmento   2 | molde pos. 11-20 | cebador ARN 5'-UAACCC-3' + ADN GTTA (10 nt)
-   - Fragmento   3 | molde pos. 21-30 | cebador ARN 5'-GGUCAA-3' + ADN CTCA (10 nt)
-   - Fragmento   4 | molde pos. 31-40 | cebador ARN 5'-UCAGUA-3' + ADN GTAC (10 nt)
-   - Fragmento   5 | molde pos. 41-50 | cebador ARN 5'-CGGACC-3' + ADN TGCC (10 nt)
-   - Fragmento   6 | molde pos. 51-60 | cebador ARN 5'-UUAUAA-3' + ADN CACT (10 nt)
+   - Fragmento   1 | molde pos. 1-10 | cebador ARN 5'-GACGCU-3' + ADN TCAT (10 nt)
+   - Fragmento   2 | molde pos. 11-20 | cebador ARN 5'-AGUACC-3' + ADN TGAT (10 nt)
+   - Fragmento   3 | molde pos. 21-30 | cebador ARN 5'-CAAAAG-3' + ADN AATA (10 nt)
+   - Fragmento   4 | molde pos. 31-40 | cebador ARN 5'-AUAGGA-3' + ADN GCCC (10 nt)
+   - Fragmento   5 | molde pos. 41-50 | cebador ARN 5'-CAUAUU-3' + ADN AAAC (10 nt)
+   - Fragmento   6 | molde pos. 51-60 | cebador ARN 5'-CUAAUA-3' + ADN CCGG (10 nt)
   La ADN polimerasa I sustituye los cebadores por ADN y la ADN ligasa sella los huecos
   -> hebra rezagada completa (alineada con su molde, 3'<-5'):
-  TACCTAACCCATTGCCCAATACTCAACTGGCATGATGACTCCGTCCAGGCTCACAATATT
+  TACTTCGCAGTAGTCCATGAATAAGAAAACCCCGAGGATACAAATTATACGGCCATAATC
 
 4. Resultado: dos moléculas hijas semiconservativas (cada una con una hebra vieja y una nueva)
   Hija 1: hebra líder nueva (arriba, 5'->3') + hebra molde parental (abajo, 3'<-5')
-  5'-ATGGATTGGGTAACGGGTTATGAGTTGACCGTACTACTGAGGCAGGTCCGAGTGTTATAA
-  3'-TACCTAACCCATTGCCCAATACTCAACTGGCATGATGACTCCGTCCAGGCTCACAATATT
+  5'-ATGAAGCGTCATCAGGTACTTATTCTTTTGGGGCTCCTATGTTTAATATGCCGGTATTAG
+  3'-TACTTCGCAGTAGTCCATGAATAAGAAAACCCCGAGGATACAAATTATACGGCCATAATC
 
   Hija 2: hebra codificante parental (arriba, 5'->3') + hebra rezagada nueva (abajo, 3'<-5')
-  5'-ATGGATTGGGTAACGGGTTATGAGTTGACCGTACTACTGAGGCAGGTCCGAGTGTTATAA
-  3'-TACCTAACCCATTGCCCAATACTCAACTGGCATGATGACTCCGTCCAGGCTCACAATATT
+  5'-ATGAAGCGTCATCAGGTACTTATTCTTTTGGGGCTCCTATGTTTAATATGCCGGTATTAG
+  3'-TACTTCGCAGTAGTCCATGAATAAGAAAACCCCGAGGATACAAATTATACGGCCATAATC
 
 ======================================================================
  ETAPA 2 - TRANSCRIPCION  (ADN -> ARN)
@@ -62,10 +62,10 @@ Elongación: lee la hebra molde en sentido 3'->5' y añade ribonucleótidos
   complementarios, sintetizando el ARNm en sentido 5'->3'.
 
 Molde utilizado (hebra de ADN, 3'->5'):
-  TACCTAACCCATTGCCCAATACTCAACTGGCATGATGACTCCGTCCAGGCTCACAATATT
+  TACTTCGCAGTAGTCCATGAATAAGAAAACCCCGAGGATACAAATTATACGGCCATAATC
 
 ARN mensajero sintetizado (5'->3'):
-  AUGGAUUGGGUAACGGGUUAUGAGUUGACCGUACUACUGAGGCAGGUCCGAGUGUUAUAA
+  AUGAAGCGUCAUCAGGUACUUAUUCUUUUGGGGCUCCUAUGUUUAAUAUGCCGGUAUUAG
 
 (Regla de complementariedad aplicada: A<->U, T<->A, C<->G, G<->C)
 Comprobación: el ARNm coincide con la hebra codificante cambiando T por U: sí
@@ -81,28 +81,28 @@ Elongación: cada codón es reconocido por un ARNt con el anticodón complementa
   (la aminoacil-ARNt sintetasa cargó antes cada ARNt con su aminoácido):
 
    pos    0 | codón AUG | ARNt anticodón 3'-UAC-5' | M  Metionina (inicio)
-   pos    3 | codón GAU | ARNt anticodón 3'-CUA-5' | D  Ác. aspártico
-   pos    6 | codón UGG | ARNt anticodón 3'-ACC-5' | W  Triptófano
-   pos    9 | codón GUA | ARNt anticodón 3'-CAU-5' | V  Valina
-   pos   12 | codón ACG | ARNt anticodón 3'-UGC-5' | T  Treonina
-   pos   15 | codón GGU | ARNt anticodón 3'-CCA-5' | G  Glicina
-   pos   18 | codón UAU | ARNt anticodón 3'-AUA-5' | Y  Tirosina
-   pos   21 | codón GAG | ARNt anticodón 3'-CUC-5' | E  Ác. glutámico
-   pos   24 | codón UUG | ARNt anticodón 3'-AAC-5' | L  Leucina
-   pos   27 | codón ACC | ARNt anticodón 3'-UGG-5' | T  Treonina
-   pos   30 | codón GUA | ARNt anticodón 3'-CAU-5' | V  Valina
-   pos   33 | codón CUA | ARNt anticodón 3'-GAU-5' | L  Leucina
-   pos   36 | codón CUG | ARNt anticodón 3'-GAC-5' | L  Leucina
-   pos   39 | codón AGG | ARNt anticodón 3'-UCC-5' | R  Arginina
-   pos   42 | codón CAG | ARNt anticodón 3'-GUC-5' | Q  Glutamina
-   pos   45 | codón GUC | ARNt anticodón 3'-CAG-5' | V  Valina
-   pos   48 | codón CGA | ARNt anticodón 3'-GCU-5' | R  Arginina
-   pos   51 | codón GUG | ARNt anticodón 3'-CAC-5' | V  Valina
-   pos   54 | codón UUA | ARNt anticodón 3'-AAU-5' | L  Leucina
-   pos   57 | codón UAA | sin ARNt: factor de liberación -> TERMINACIÓN
+   pos    3 | codón AAG | ARNt anticodón 3'-UUC-5' | K  Lisina
+   pos    6 | codón CGU | ARNt anticodón 3'-GCA-5' | R  Arginina
+   pos    9 | codón CAU | ARNt anticodón 3'-GUA-5' | H  Histidina
+   pos   12 | codón CAG | ARNt anticodón 3'-GUC-5' | Q  Glutamina
+   pos   15 | codón GUA | ARNt anticodón 3'-CAU-5' | V  Valina
+   pos   18 | codón CUU | ARNt anticodón 3'-GAA-5' | L  Leucina
+   pos   21 | codón AUU | ARNt anticodón 3'-UAA-5' | I  Isoleucina
+   pos   24 | codón CUU | ARNt anticodón 3'-GAA-5' | L  Leucina
+   pos   27 | codón UUG | ARNt anticodón 3'-AAC-5' | L  Leucina
+   pos   30 | codón GGG | ARNt anticodón 3'-CCC-5' | G  Glicina
+   pos   33 | codón CUC | ARNt anticodón 3'-GAG-5' | L  Leucina
+   pos   36 | codón CUA | ARNt anticodón 3'-GAU-5' | L  Leucina
+   pos   39 | codón UGU | ARNt anticodón 3'-ACA-5' | C  Cisteína
+   pos   42 | codón UUA | ARNt anticodón 3'-AAU-5' | L  Leucina
+   pos   45 | codón AUA | ARNt anticodón 3'-UAU-5' | I  Isoleucina
+   pos   48 | codón UGC | ARNt anticodón 3'-ACG-5' | C  Cisteína
+   pos   51 | codón CGG | ARNt anticodón 3'-GCC-5' | R  Arginina
+   pos   54 | codón UAU | ARNt anticodón 3'-AUA-5' | Y  Tirosina
+   pos   57 | codón UAG | sin ARNt: factor de liberación -> TERMINACIÓN
 
 Secuencia de aminoácidos (proteína resultante):
-  MDWVTGYELTVLLRQVRVL
+  MKRHQVLILLGLLCLICRY
   Longitud: 19 aminoácidos
 
 ======================================================================
