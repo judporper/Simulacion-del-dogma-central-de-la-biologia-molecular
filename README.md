@@ -3,6 +3,8 @@
 **Bioinformática — Práctica 1**
 ULPGC · Grado en Ciencia e Ingeniería de Datos
 
+**Repositorio —** https://github.com/judporper/Simulacion-del-dogma-central-de-la-biologia-molecular
+
 Simulador en **Python con Biopython** que representa de forma integrada los
 tres procesos del dogma central y muestra cómo viaja la información desde el
 ADN hasta la proteína:
@@ -157,4 +159,4 @@ bases ambiguas (N, etc.).
   replicación (cebadores y fragmentos de Okazaki) es lógica propia, porque
   Biopython no simula procesos. El informe HTML sigue siendo autocontenido.
 - **Código genético:** `traducir()` usa la tabla 1 de Biopython (la de `Seq.translate()` por defecto);
-  pasando `table=11` se usaría la bacteriana.
+  pasando `table=11` se usaría la bacteriana.
